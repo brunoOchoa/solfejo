@@ -1,0 +1,21 @@
+{
+  "name": "solfejo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pratica de solfejo e leitura de partitura (Do fixo, padrao brasileiro)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/sora": "^5.3.0",
+    "vexflow": "^5.3.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}

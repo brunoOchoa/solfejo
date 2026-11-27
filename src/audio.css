@@ -1,0 +1,38 @@
+/* Medidor do microfone e painel de áudio */
+.mic-meter { display: inline-flex; align-items: center; gap: var(--s-2); height: 38px; padding: 0 var(--s-3); border-radius: var(--r-md); background: var(--card); border: 1px solid var(--line); color: var(--ink); font: 600 .78rem var(--font); position: relative; }
+button.mic-meter { cursor: pointer; }
+button.mic-meter:hover { border-color: var(--brand); }
+.mm-bar { position: relative; width: 64px; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--line) 80%, var(--muted)); overflow: hidden; flex: none; }
+.mm-bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--ok); transition: width .08s linear, background var(--dur-base); }
+.mm-hold { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); opacity: .7; }
+.mm-txt { display: none; white-space: nowrap; color: var(--muted); }
+.mm-note { display: inline-grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; background: var(--warn); color: #111; font: 800 .65rem var(--font); flex: none; }
+.mic-meter[data-state='off'] .mm-bar i { background: var(--muted); }
+.mic-meter[data-state='dead'], .mic-meter[data-state='low'] { border-color: var(--warn); }
+.mic-meter[data-state='dead'] .mm-txt, .mic-meter[data-state='low'] .mm-txt, .mic-meter[data-state='clip'] .mm-txt { display: inline; color: var(--warn); }
+.mic-meter[data-state='clip'] { border-color: var(--err); }
+.mic-meter[data-state='clip'] .mm-bar i { background: var(--err); }
+.mic-meter[data-state='clip'] .mm-txt { color: var(--err); }
+.mic-meter[data-state='low'] .mm-bar i { background: var(--warn); }
+@media (max-width: 760px) { .mic-meter:not(.big) .mm-txt { display: none !important; } .mm-bar { width: 44px; } }
+.mic-meter.big { display: flex; height: auto; padding: var(--s-3); }
+.mic-meter.big .mm-bar { flex: 1; height: 14px; border-radius: 7px; }
+.mic-meter.big .mm-txt { display: inline; min-width: 9em; text-align: right; }
+
+.ap { width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; text-align: left; }
+.ap-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.ap-head h2 { margin: 0; font-size: 1.15rem; }
+.ap-sec { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-3) 0; border-top: 1px solid var(--line); }
+.ap-sec h3 { margin: 0 0 2px; font: 700 .78rem var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ap-meter { margin: var(--s-1) 0; }
+.ap-row { display: flex; justify-content: space-between; gap: var(--s-3); font-size: .88rem; }
+.ap-row span { color: var(--muted); flex: none; }
+.ap-row b { text-align: right; font-weight: 600; overflow-wrap: anywhere; }
+.ap-row.warn b { color: var(--warn); }
+.ap-warn { margin: 0; padding: var(--s-2) var(--s-3); border-radius: var(--r-md); background: color-mix(in srgb, var(--warn) 14%, var(--card)); border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--line)); color: var(--ink); font-size: .84rem; }
+.ap-prof { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+.ap-tips { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; font-size: .86rem; color: var(--muted); }
+.ap-stats { margin: 0; font: 600 .84rem var(--font-num); color: var(--ink); overflow-wrap: anywhere; }
+.cal-dots.ten { grid-template-columns: repeat(5, 1fr); row-gap: 22px; }
+.cal-dot.warm { opacity: .55; border-style: dashed; }
+.ap-ok { margin: 0; padding: var(--s-2) var(--s-3); border-radius: var(--r-md); background: color-mix(in srgb, var(--ok) 13%, var(--card)); border: 1px solid color-mix(in srgb, var(--ok) 45%, var(--line)); font-size: .84rem; }

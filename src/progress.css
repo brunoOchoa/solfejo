@@ -1,0 +1,46 @@
+/* ---- Progresso gamificado ---- */
+.hero { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; background: radial-gradient(500px 200px at 0 0, var(--brand-soft), transparent 70%), linear-gradient(180deg, var(--card-2), var(--card)); }
+.ring { position: relative; width: 132px; height: 132px; }
+.ring-svg { width: 100%; height: 100%; display: block; }
+.ring-bg { fill: none; stroke: var(--line); stroke-width: 10; }
+.ring-fg { fill: none; stroke: url(#rg); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.1s var(--ease-out); filter: drop-shadow(0 0 6px var(--brand-soft)); }
+.ring-tx { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.15; }
+.ring-tx b { font: 800 1.6rem var(--font-display); }
+.ring-tx small { color: var(--muted); font-size: .75rem; }
+.hero-side { display: grid; gap: 12px; min-width: 0; }
+.hero-xp b { font: 800 1.5rem var(--font-num); display: block; }
+.hero-xp small { color: var(--muted); }
+.goal-top { display: flex; justify-content: space-between; font-size: .85rem; margin-bottom: 6px; }
+.goal-top b { font-family: var(--font-num); }
+.goal-bar { height: 12px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+.goal-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-2)); transition: width 1s var(--ease-out); }
+.goal-bar.done i { background: linear-gradient(90deg, var(--ok), var(--brand-2)); box-shadow: 0 0 14px color-mix(in srgb, var(--ok) 50%, transparent); }
+.hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.keys { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.key { --c: var(--line); position: relative; overflow: hidden; display: grid; align-content: end; justify-items: center; gap: 2px; height: 128px; padding: 10px 2px; border-radius: 6px 6px var(--r-md) var(--r-md); background: var(--bg); border: 1px solid var(--line); animation: key-in .5s var(--ease-out) backwards; animation-delay: calc(var(--i) * 50ms); }
+.k-fill { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 70%, transparent), color-mix(in srgb, var(--c) 28%, transparent)); transition: height 1s var(--ease-out); }
+.key b, .key small { position: relative; z-index: 1; }
+.key b { font: 700 .95rem var(--font-display); }
+.key small { color: var(--muted); font: 500 .72rem var(--font-num); }
+.key.train { --c: var(--err); }
+.key.good { --c: var(--warn); }
+.key.master { --c: var(--ok); border-color: color-mix(in srgb, var(--ok) 55%, var(--line)); box-shadow: 0 0 18px color-mix(in srgb, var(--ok) 25%, transparent); }
+@keyframes key-in { from { opacity: 0; transform: translateY(14px); } }
+
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.badge-tile { display: grid; gap: 2px; justify-items: center; text-align: center; padding: 14px 8px; border-radius: var(--r-md); background: var(--bg); border: 1px solid var(--line); opacity: .55; filter: grayscale(.7); transition: transform var(--dur-base) var(--ease-spring); }
+.badge-tile.got { opacity: 1; filter: none; border-color: color-mix(in srgb, var(--warn) 55%, var(--line)); background: linear-gradient(180deg, color-mix(in srgb, var(--warn) 12%, var(--bg)), var(--bg)); }
+.badge-tile.got:hover { transform: translateY(-3px) scale(1.03); }
+.bt-ic { font-size: 1.8rem; line-height: 1.2; }
+.badge-tile b { font: 700 .85rem var(--font-display); }
+.badge-tile small { color: var(--muted); font-size: .7rem; line-height: 1.3; }
+@media (max-width: 480px) {
+  .hero { grid-template-columns: 1fr; justify-items: center; }
+  .hero-side { width: 100%; }
+  .keys { gap: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .key { animation: none; }
+  .ring-fg, .goal-bar i, .k-fill { transition: none; }
+}

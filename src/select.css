@@ -1,0 +1,50 @@
+/* Select próprio: gatilho arredondado + lista suspensa animada */
+.sel { position: relative; width: 100%; min-width: 0; }
+.sel-btn {
+  width: 100%; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: var(--s-2);
+  padding: 8px 10px 8px 12px; border-radius: var(--r-md); text-align: left; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 55%, var(--card)); color: var(--ink); border: 1px solid var(--line);
+  font: 600 .88rem var(--font); box-shadow: 0 2px 0 var(--btn-edge);
+  transition: border-color var(--dur-base), background var(--dur-base), box-shadow var(--dur-base), transform var(--dur-fast);
+}
+.sel-btn:hover { border-color: color-mix(in srgb, var(--brand) 60%, var(--line)); background: var(--card-2); }
+.sel-btn:active { transform: translateY(2px); box-shadow: none; }
+.sel.open .sel-btn, .sel-btn:focus-visible { border-color: var(--brand-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-2) 22%, transparent); outline: none; }
+.sel-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.sel-chev { flex: none; color: var(--muted); transition: transform var(--dur-base) var(--ease-spring), color var(--dur-base); }
+.sel.open .sel-chev { transform: rotate(180deg); color: var(--brand-2); }
+
+.sel-pop {
+  position: fixed; z-index: 120; margin: 0; padding: 6px; list-style: none; overflow-y: auto; overscroll-behavior: contain;
+  border-radius: var(--r-lg); background: var(--card-2); border: 1px solid color-mix(in srgb, var(--brand) 40%, var(--line));
+  box-shadow: var(--lift), 0 0 0 1px #0000000d; transform-origin: top center;
+  animation: sel-in .2s var(--ease-spring) both;
+}
+.sel-pop[data-up] { transform-origin: bottom center; }
+.sel-pop.out { animation: sel-out .14s var(--ease-out) both; pointer-events: none; }
+@keyframes sel-in { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
+@keyframes sel-out { to { opacity: 0; transform: translateY(-4px) scale(.97); } }
+.sel-pop[data-up] { --dy: 6px; }
+.sel-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); min-height: 40px; padding: 8px 12px;
+  border-radius: var(--r-md); cursor: pointer; font: 600 .88rem var(--font); color: var(--ink);
+  animation: opt-in .22s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 18ms);
+}
+@keyframes opt-in { from { opacity: 0; transform: translateX(-6px); } }
+.sel-opt.act { background: var(--brand-soft); }
+.sel-opt .sel-ck { flex: none; opacity: 0; color: var(--brand-2); transform: scale(.6); transition: opacity var(--dur-base), transform var(--dur-base) var(--ease-spring); }
+.sel-opt[aria-selected='true'] { color: var(--brand-2); }
+.sel-opt[aria-selected='true'] .sel-ck { opacity: 1; transform: none; }
+
+.quick .sel-btn { min-height: 36px; padding: 6px 8px 6px 10px; font-size: .82rem; }
+.set-row .sel { max-width: 55%; }
+@media (max-width: 480px) { .set-row .sel { max-width: none; width: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .sel-pop, .sel-pop.out, .sel-opt { animation: none; }
+  .sel-chev, .sel-opt .sel-ck { transition: none; }
+}
+
+/* opções: uma linha cada (o popup cresce até 400 px); só quebra se for maior que isso */
+.sel-opt { white-space: nowrap; }
+.sel-opt > span { overflow: hidden; text-overflow: ellipsis; }
+.sel-pop { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--brand) 50%, transparent) transparent; }

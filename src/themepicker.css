@@ -1,0 +1,53 @@
+/* Painel de aparência (modo + paleta) */
+.tp-scrim { position: fixed; inset: 0; z-index: 130; background: #0000004d; animation: fade-in .18s both; }
+.tp {
+  position: fixed; z-index: 131; top: calc(var(--hud-h) + 6px); right: max(12px, env(safe-area-inset-right));
+  width: min(392px, calc(100vw - 24px)); max-height: calc(100dvh - var(--hud-h) - 20px); overflow-y: auto; overscroll-behavior: contain;
+  padding: var(--s-4); border-radius: var(--r-lg); background: var(--card); border: 1px solid color-mix(in srgb, var(--brand) 40%, var(--line));
+  box-shadow: var(--lift); transform-origin: top right; animation: tp-in .24s var(--ease-spring) both;
+  scrollbar-width: thin;
+}
+.tp.out, .tp-scrim.out { animation: tp-out .16s var(--ease-out) both; pointer-events: none; }
+@keyframes tp-in { from { opacity: 0; transform: translateY(-8px) scale(.96); } }
+@keyframes tp-out { to { opacity: 0; transform: translateY(-6px) scale(.97); } }
+.tp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-3); font: 800 1.05rem var(--font-display); }
+.tp-x { width: 32px; height: 32px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--card-2); color: var(--muted); cursor: pointer; }
+.tp-x:hover { color: var(--ink); border-color: var(--brand); }
+.tp-sec { margin: var(--s-3) 0 var(--s-2); font: 700 .72rem var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tp-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: var(--r-pill); background: var(--bg); border: 1px solid var(--line); }
+.tp-mode {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; border-radius: var(--r-pill);
+  border: 0; background: transparent; color: var(--muted); font: 700 .84rem var(--font); cursor: pointer; transition: background var(--dur-base), color var(--dur-base);
+}
+.tp-mode:hover { color: var(--ink); }
+.tp-mode[aria-checked='true'] { background: var(--brand); color: var(--brand-ink); box-shadow: var(--glow); }
+.tp-mi { display: inline-grid; }
+.tp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-2); }
+.tp-card {
+  display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 8px; text-align: left; cursor: pointer;
+  border-radius: var(--r-md); background: var(--card-2); border: 2px solid var(--line); color: var(--ink);
+  transition: border-color var(--dur-base), transform var(--dur-base) var(--ease-spring), box-shadow var(--dur-base);
+}
+.tp-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand) 55%, var(--line)); }
+.tp-card[aria-checked='true'] { border-color: var(--brand-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-2) 22%, transparent); }
+.tp-card:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+.tp-prev {
+  position: relative; display: block; height: 54px; margin-bottom: 6px; border-radius: 9px; overflow: hidden;
+  background: var(--p-bg); border: 1px solid var(--p-line);
+}
+.tp-prev i { position: absolute; display: block; }
+.tp-bar { left: 6px; right: 6px; bottom: 6px; height: 22px; border-radius: 7px; background: var(--p-card); border: 1px solid var(--p-line); }
+.tp-dot { width: 14px; height: 14px; border-radius: 50%; bottom: 11px; }
+.tp-dot.a { left: 12px; background: var(--p-a); }
+.tp-dot.b { left: 32px; background: var(--p-b); }
+.tp-line { left: 54px; right: 12px; bottom: 17px; height: 4px; border-radius: 2px; background: var(--p-ink); opacity: .55; }
+.tp-prev::before { content: ''; position: absolute; left: 8px; top: 8px; width: 46%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--p-a), var(--p-b)); }
+.tp-name { font: 800 .9rem var(--font-display); }
+.tp-tag { font: 500 .72rem/1.25 var(--font); color: var(--muted); }
+@media (max-width: 760px) {
+  .tp { top: auto; right: 0; left: 0; bottom: 0; width: auto; max-height: 82dvh; border-radius: var(--r-lg) var(--r-lg) 0 0; padding-bottom: max(var(--s-4), env(safe-area-inset-bottom)); transform-origin: bottom center; }
+  @keyframes tp-in { from { opacity: 0; transform: translateY(40px); } }
+}
+@media (prefers-reduced-motion: reduce) { .tp, .tp-scrim, .tp.out, .tp-scrim.out { animation: none; } .tp-card, .tp-mode { transition: none; } }
+.tp-perf { margin: var(--s-2) 0 0; font-size: .78rem; line-height: 1.4; color: var(--muted); }
+.tp-copy { width: 100%; margin-top: var(--s-2); }

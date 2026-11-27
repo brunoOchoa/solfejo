@@ -1,0 +1,95 @@
+/* Prática de acordes: cartões da progressão, braço do violão e teclado */
+.chord-strip {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: var(--s-2);
+  max-height: 156px; overflow-y: auto; overscroll-behavior: contain; padding: 2px; scrollbar-width: thin;
+}
+.cc {
+  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px 7px; min-width: 0; cursor: pointer;
+  border-radius: var(--r-md); background: var(--card-2); border: 2px solid var(--line); color: var(--ink); font-family: var(--font);
+  transition: border-color var(--dur-base), background var(--dur-base), transform var(--dur-base) var(--ease-spring), box-shadow var(--dur-base);
+}
+.cc:hover { border-color: color-mix(in srgb, var(--brand) 55%, var(--line)); }
+.cc-r { font: 700 .7rem var(--font-num); color: var(--muted); letter-spacing: .02em; }
+.cc-s { font: 800 1.3rem/1.15 var(--font-display); }
+.cc-n { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 .66rem var(--font); color: var(--muted); }
+.cc.sel { border-color: var(--brand-2); }
+.cc.cur { border-color: var(--brand); background: var(--brand-soft); transform: translateY(-2px); box-shadow: var(--glow); }
+.cc.perfect { border-color: color-mix(in srgb, var(--ok) 70%, var(--line)); background: color-mix(in srgb, var(--ok) 13%, var(--card-2)); }
+.cc.ok { border-color: color-mix(in srgb, var(--warn) 70%, var(--line)); background: color-mix(in srgb, var(--warn) 13%, var(--card-2)); }
+.cc.wrong { border-color: color-mix(in srgb, var(--err) 70%, var(--line)); background: color-mix(in srgb, var(--err) 13%, var(--card-2)); }
+.cc.none { border-style: dashed; border-color: color-mix(in srgb, var(--err) 55%, var(--line)); }
+.cc.cur.perfect, .cc.cur.ok, .cc.cur.wrong { border-color: var(--brand); }
+
+.chord-host { display: flex; flex-direction: column; gap: var(--s-2); }
+.chord-board { display: block; }
+.cb-svg { display: block; width: 100%; height: auto; max-height: min(270px, 36dvh); margin-inline: auto; }
+.cb-svg.piano { max-height: min(200px, 30dvh); }
+.chord-msg { color: var(--warn); font: 600 .85rem var(--font); }
+.chord-msg:empty { display: none; }
+
+/* braço do violão */
+.cb-wood { fill: color-mix(in srgb, var(--card-2) 70%, var(--bg)); stroke: var(--line); }
+.cb-fret { stroke: color-mix(in srgb, var(--muted) 45%, transparent); stroke-width: 2; }
+.cb-nut { stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+.cb-inlay { fill: color-mix(in srgb, var(--muted) 30%, transparent); }
+.cb-fretnum { fill: var(--muted); font: 600 12px var(--font-num); }
+.cb-fretnum.big { font-size: 14px; fill: var(--brand-2); }
+.cb-string { stroke: color-mix(in srgb, var(--ink) 55%, var(--muted)); stroke-linecap: round; }
+.cb-sname { fill: var(--muted); font: 600 11px var(--font); }
+.cb-mute { fill: var(--muted); font: 700 22px var(--font); }
+.cb-barre { fill: color-mix(in srgb, var(--brand) 38%, transparent); }
+.cb-note circle { fill: var(--brand); stroke: transparent; stroke-width: 3; transition: fill var(--dur-base), stroke var(--dur-base); }
+.cb-note text { fill: var(--brand-ink); font: 800 14px var(--font); pointer-events: none; }
+.cb-note.root circle { stroke: var(--brand-2); }
+.cb-note.open circle { fill: none; stroke: var(--brand); stroke-width: 3; }
+.cb-note.open.root circle { stroke: var(--brand-2); }
+.cb-note.heard circle { fill: var(--ok); stroke: var(--ok); }
+.cb-note.heard text { fill: #052e14; }
+.cb-note.open.heard circle { fill: color-mix(in srgb, var(--ok) 35%, transparent); }
+
+/* teclado */
+.pk-frame { fill: #0d0d12; }
+.pk .key { transition: fill var(--dur-base), transform var(--dur-base); }
+.pk.white .key { fill: #fbfbfd; stroke: #9a9aa8; stroke-width: 1; }
+.pk.black .key { fill: #17171d; stroke: #000; stroke-width: 1; }
+.pk.target.white .key { fill: color-mix(in srgb, var(--brand) 30%, #fbfbfd); stroke: color-mix(in srgb, var(--brand) 55%, #6b6b78); }
+.pk.target.black .key { fill: color-mix(in srgb, var(--brand) 55%, #17171d); }
+.pk.target { transform: translateY(1.5px); }
+.pk.target.heard.white .key { fill: color-mix(in srgb, var(--ok) 38%, #fbfbfd); stroke: var(--ok); }
+.pk.target.heard.black .key { fill: color-mix(in srgb, var(--ok) 55%, #17171d); }
+.pk-mark circle { fill: var(--brand); stroke: #fff; stroke-width: 2; filter: drop-shadow(0 2px 3px #0006); transition: fill var(--dur-base); }
+.pk-mark.root circle { stroke: var(--brand-2); stroke-width: 3; }
+.pk-mark text { fill: var(--brand-ink); font: 800 10.5px var(--font); pointer-events: none; }
+.pk-mark text.sm { font-size: 8.5px; }
+.pk-mark.heard circle { fill: var(--ok); }
+.pk-mark.heard text { fill: #052e14; }
+
+/* notas do acorde */
+.tone-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 28px; }
+.tone {
+  padding: 4px 12px; border-radius: var(--r-pill); font: 700 .82rem var(--font); color: var(--muted);
+  background: var(--bg); border: 1px solid var(--line); transition: background var(--dur-base), color var(--dur-base), border-color var(--dur-base);
+}
+.tone.on { background: color-mix(in srgb, var(--ok) 22%, var(--bg)); border-color: var(--ok); color: var(--ok); }
+.tone.bad { background: color-mix(in srgb, var(--err) 16%, var(--bg)); border-color: var(--err); color: var(--err); }
+@media (prefers-reduced-motion: reduce) { .cc, .cb-note circle, .tone { transition: none; } .cc.cur { transform: none; } }
+
+/* celular: cartões numa fila que rola de lado (sobra altura para o quadro) e o quadro fica acima da barra de baixo */
+@media (max-width: 760px) {
+  .chord-strip { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 74px; overflow-x: auto; overflow-y: hidden; max-height: none; padding-bottom: 6px; }
+  body:not(.focus-mode) .inst-grid .staff-card .graph-host { bottom: calc(var(--tabbar-h) + 8px + env(safe-area-inset-bottom)); }
+}
+body.focus-mode .cb-svg { max-height: min(460px, 46dvh); }
+body.focus-mode .cb-svg.piano { max-height: min(320px, 38dvh); }
+
+/* escala inteira no braço (prática livre) */
+.chord-board { overflow-x: auto; }
+.cb-svg.wide { min-width: 560px; max-height: min(260px, 34dvh); }
+.cb-note.scale circle { fill: color-mix(in srgb, var(--brand) 70%, var(--card)); }
+.cb-note.scale text { font-size: 9px; }
+.cb-note.scale.root circle { fill: var(--brand); stroke: var(--brand-2); }
+.cb-note.scale.open circle { fill: none; stroke: var(--brand); stroke-width: 2.5; }
+.cb-note.scale.open text { fill: var(--ink); }
+.cb-note.scale.open.root circle { stroke: var(--brand-2); }
+.cb-note.scale.heard circle { fill: var(--ok); stroke: var(--ok); }
+.cb-note.scale.open.heard circle { fill: color-mix(in srgb, var(--ok) 35%, transparent); stroke: var(--ok); }

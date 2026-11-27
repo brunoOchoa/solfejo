@@ -1,0 +1,28 @@
+/* ---- controle deslizante ---- */
+.slider { --pct: 0%; display: grid; gap: 6px; padding: 8px 10px 6px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); min-width: 0; }
+.slider.compact { padding: 0; background: transparent; border: 0; }
+.sl-head { display: flex; align-items: center; gap: 8px; }
+.sl-ic { font-size: 1.05rem; width: 1.3em; text-align: center; }
+.sl-label { flex: 1; font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.sl-val { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; transition: color .2s; }
+.slider.compact .sl-val { font-size: .85rem; min-width: 5.5ch; text-align: right; }
+.slider.over .sl-val { color: var(--warn); }
+.sl-row { display: flex; align-items: center; gap: 8px; }
+.sl-step { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 1.1rem; font-weight: 700; line-height: 1; cursor: pointer; transition: transform .12s, border-color .15s, background .15s; }
+.sl-step:hover { border-color: var(--brand); }
+.sl-step:active { transform: scale(.88); background: var(--brand); color: var(--brand-ink); }
+.sl-tap { font: inherit; font-size: .72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+.sl-tap:active { background: var(--brand); color: var(--brand-ink); }
+.sl-cap { font-size: .72rem; color: var(--muted); text-align: left; padding-left: 38px; margin-top: -2px; }
+.sl-track { position: relative; flex: 1; min-width: 0; height: 30px; display: flex; align-items: center; }
+.sl-track input { -webkit-appearance: none; appearance: none; width: 100%; height: 30px; margin: 0; background: transparent; cursor: pointer; }
+.sl-track input::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--brand) var(--pct), color-mix(in srgb, var(--line) 85%, var(--muted)) var(--pct)); }
+.sl-track input::-moz-range-track { height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--line) 85%, var(--muted)); }
+.sl-track input::-moz-range-progress { height: 8px; border-radius: 4px; background: var(--brand); }
+.sl-track input::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -7px; border-radius: 50%; background: #fff; border: 3px solid var(--brand); box-shadow: 0 2px 6px rgba(0,0,0,.3); transition: transform .12s; }
+.sl-track input::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid var(--brand); box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+.sl-track input:active::-webkit-slider-thumb { transform: scale(1.2); }
+.sl-track input:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 6px; }
+.slider.over .sl-track input::-webkit-slider-runnable-track { background: linear-gradient(90deg, var(--brand) var(--mark, 50%), var(--warn) var(--mark, 50%) var(--pct), color-mix(in srgb, var(--line) 85%, var(--muted)) var(--pct)); }
+.sl-track.has-mark::after { content: ''; position: absolute; left: var(--mark); top: 4px; bottom: 4px; width: 2px; margin-left: -1px; background: var(--muted); opacity: .55; pointer-events: none; border-radius: 1px; }
+.slider.compact .sl-row { width: 100%; }

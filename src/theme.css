@@ -1,0 +1,43 @@
+/* Tokens do tema "arcade clean". Escuro é o padrão; claro é opcional. Nomes antigos (--bg, --card, --ink…) foram mantidos. */
+:root {
+  /* tipografia */
+  --font-display: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  /* forma e movimento */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-fast: .12s; --dur-base: .22s; --dur-slow: .45s;
+  /* escala de espaçamento: tudo usa estes passos (4 · 8 · 12 · 16 · 24) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --hud-h: 56px; --tabbar-h: 64px;
+  color-scheme: dark;
+}
+/* escuro (padrão) */
+:root, :root[data-theme='dark'] {
+  --bg: #0b0d1a; --bg-glow: #1a1450; --card: #141830; --card-2: #1b2040; --ink: #eef0ff; --muted: #98a1c7; --line: #272d55;
+  --brand: #6f4dff; --brand-2: #5ad6ff; --brand-ink: #ffffff; --brand-soft: #7c5cff26;
+  --ok: #3ddc84; --err: #ff5a86; --warn: #ffb938; --staff-ink: #eef0ff;
+  --glass: #0b0d1ab8; --glow: 0 0 0 1px #7c5cff66, 0 6px 28px #7c5cff40; --lift: 0 10px 30px #00000066;
+  --btn-edge: #00000055;
+}
+/* claro */
+:root[data-theme='light'] {
+  --bg: #f3f2fb; --bg-glow: #e3dcff; --card: #ffffff; --card-2: #f7f5ff; --ink: #1a1740; --muted: #65638f; --line: #e1ddf3;
+  --brand: #6a43f0; --brand-2: #0677b4; --brand-ink: #ffffff; --brand-soft: #6a43f01a;
+  --ok: #0e7f38; --err: #d01650; --warn: #b45309; --staff-ink: #1a1740;
+  --glass: #f3f2fbc8; --glow: 0 0 0 1px #6a43f044, 0 6px 22px #6a43f02e; --lift: 0 10px 26px #2a1d6a1f;
+  --btn-edge: #1a174026;
+  color-scheme: light;
+}
+/* automático: segue o sistema quando não há data-theme */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f3f2fb; --bg-glow: #e3dcff; --card: #ffffff; --card-2: #f7f5ff; --ink: #1a1740; --muted: #65638f; --line: #e1ddf3;
+    --brand: #6a43f0; --brand-2: #0677b4; --brand-soft: #6a43f01a;
+    --ok: #0e7f38; --err: #d01650; --warn: #b45309; --staff-ink: #1a1740;
+    --glass: #f3f2fbc8; --glow: 0 0 0 1px #6a43f044, 0 6px 22px #6a43f02e; --lift: 0 10px 26px #2a1d6a1f;
+    --btn-edge: #1a174026; color-scheme: light;
+  }
+}
