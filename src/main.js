@@ -198,7 +198,7 @@ const warm = () => {
   if (navigator.connection?.saveData) return;
   Object.values(ROUTES).forEach((r, i) => setTimeout(() => r.load().catch(() => {}), i * 500));
 };
-(window.requestIdleCallback || setTimeout)(warm, 3000);
+setTimeout(() => (window.requestIdleCallback ? window.requestIdleCallback(warm, { timeout: 5000 }) : warm()), 3000);
 window.addEventListener('perflite', () => toast({ icon: '🍃', title: 'Modo leve ativado', text: 'Este aparelho está com poucos quadros por segundo: simplifiquei as animações. Dá para mudar em Aparência › Desempenho.', ms: 5200 }));
 document.fonts?.ready.then(movePill);
 
