@@ -28,6 +28,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # abre a versão de produção num Chrome, percorre as abas e liga o microfone: pega erros que só aparecem no build
+      - run: npm run smoke
       - uses: actions/configure-pages@v5
         if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
