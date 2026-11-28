@@ -316,4 +316,3 @@ main.wide { max-width: 1280px; padding: 10px 16px 24px; gap: 10px; }
 }
 .fb-next { opacity: calc(.55 + var(--u, 0) * .45); }
 @media (prefers-reduced-motion: reduce) { .fb-target:not(.done) .fb-gc { animation: none; } }
-

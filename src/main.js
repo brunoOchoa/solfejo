@@ -15,6 +15,8 @@ import './select.css';
 import './themepicker.css';
 import './chords.css';
 import './audio.css';
+import './pbar.css';
+import './psub.css';
 import { setAudioTab } from './music/audio.js';
 import { getStats, streakDays } from './storage.js';
 import { getCombo, resetCombo } from './ui/fx.js';

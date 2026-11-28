@@ -1,8 +1,9 @@
 // Botão "🔊 Volume" com um painel de controles: volume do instrumento e do metrônomo, separados por aba.
 import { h } from '../dom.js';
+import { icon as svgIcon } from './icons.js';
 import { createSlider } from './slider.js';
 import {
-  getVolume, setVolume, getCtx, scheduleClick, playPitch,
+  getVolume, setVolume, getCtx, scheduleClick, playPitch, scheduleFreq, getInstrument,
 } from '../music/audio.js';
 
 const icon = (v) => (v === 0 ? '🔇' : v < 50 ? '🔈' : v < 120 ? '🔉' : '🔊');
@@ -12,10 +13,19 @@ const caption = (v) => (v === 0 ? 'Sem som' : v > 100 ? 'Acima do normal: use fo
  * inst: mostra o volume do instrumento (notas, referência). click: mostra o do metrônomo.
  * Os valores valem para a aba atual (a aba é definida em main.js via setAudioTab).
  */
-export function createVolumeControl({ inst = true, click = true } = {}) {
-  const btn = h('button', { class: 'btn vol-btn', type: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false', onclick: () => toggle() }, '🔊 Volume');
+export function createVolumeControl({ inst = true, click = true, iconOnly = false, song = false } = {}) {
+  const btn = h('button', { class: `btn vol-btn${iconOnly ? ' icon-btn' : ''}`, type: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false', onclick: () => toggle() }, iconOnly ? null : '🔊 Volume');
+  if (iconOnly) { btn.innerHTML = svgIcon('somOn', '1.2rem'); btn.title = 'Volume'; btn.setAttribute('aria-label', 'Volume'); }
   const sliders = [];
-  if (inst) {
+  if (song) {
+    // modo música: a melodia (violino) e o acompanhamento (piano) têm volumes separados
+    [['melody', 'Violino', 659.26], ['accomp', 'Acompanhamento', 261.63]].forEach(([kind, label, hz]) => sliders.push(createSlider({
+      label, icon, min: 0, max: 200, step: 5, value: Math.round(getVolume(kind) * 100), mark: 100,
+      format: (v) => `${v}%`, caption, className: 'vol-slider',
+      onInput: (v) => setVolume(kind, v / 100),
+      onChange: () => { scheduleFreq(hz, getCtx().currentTime + 0.03, 0.7, { bank: kind === 'melody' ? getInstrument() : 'piano', kind }); },
+    })));
+  } else if (inst) {
     sliders.push(createSlider({
       label: 'Instrumento', icon, min: 0, max: 200, step: 5, value: Math.round(getVolume('inst') * 100), mark: 100,
       format: (v) => `${v}%`, caption, className: 'vol-slider',

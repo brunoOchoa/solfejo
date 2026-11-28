@@ -34,8 +34,13 @@ import { createSlider, tempoName } from '../ui/slider.js';
 import { createMicMeter } from '../ui/micMeter.js';
 import { openAudioPanel } from '../ui/audioPanel.js';
 import { openEchoCalibration } from '../ui/echoCalibration.js';
+import {
+  createPracticeBar, createExerciseRows, iconButton, micGroup,
+} from '../ui/practiceBar.js';
 import { activeProfile, saveProfile, calStats, extraTolerance, clickLeak, leakText } from '../music/audioProfile.js';
 import { mountChords, wantsChords, CHORD_DEFAULTS } from './chordPractice.js';
+import { mountSong, SONG_DEFAULTS } from './songPractice.js';
+import { createPracticeNav } from '../ui/practiceNav.js';
 
 const DEFAULTS = {
   instr: 'piano', mode: 'free', type: 'major', pattern: 'scale', direction: 'up', octaves: 1,
@@ -43,6 +48,7 @@ const DEFAULTS = {
   tol: 40, anyOctave: false, names: true,
   bpm: 60, figure: 'q', position: '1', click: true, clickSub: true, tonicRef: true, rigor: 'normal', offset: 0,
   ...CHORD_DEFAULTS,
+  ...SONG_DEFAULTS,
 };
 
 // nota certa, mas fora da tolerância de afinação (menos de 1 semitom de erro)
@@ -98,7 +104,8 @@ export function mountInstrument(root) {
     off?.();
     root.replaceChildren();
     const cfg = load('cfg.instrument', DEFAULTS);
-    off = wantsChords(cfg) ? mountChords(root, { defaults: DEFAULTS, remount: go }) : mountNotes(root, { remount: go });
+    if (cfg.instr === 'violin' && cfg.area === 'songs') off = mountSong(root, { defaults: DEFAULTS, remount: go }); // músicas (só violino)
+    else off = wantsChords(cfg) ? mountChords(root, { defaults: DEFAULTS, remount: go }) : mountNotes(root, { remount: go });
   };
   go();
   return () => { off?.(); off = null; };
@@ -235,8 +242,15 @@ function mountNotes(root, { remount }) {
   }
 
   // ---- elementos da tela -----------------------------------------------------------------
-  const instrTabs = h('div', { class: 'seg', role: 'tablist', 'aria-label': 'Instrumento' }, Object.entries(INSTRUMENT_PROFILES).map(([id, p]) =>
-    h('button', { class: 'seg-btn', role: 'tab', 'data-instr': id, onclick: () => update({ instr: id }) }, h('span', { text: p.icon }), h('span', { class: 'lbl', text: ` ${p.label}` }))));
+  // submenu flutuante: instrumento (lista) e área (violino: Escalas ou Músicas; outros: Acordes ou Notas soltas)
+  const nav = createPracticeNav({
+    instruments: INSTRUMENT_PROFILES,
+    getCfg: () => cfg,
+    onInstrument: (id) => update({ instr: id }),
+    onArea: (id) => {
+      if (cfg.instr === 'violin') { cfg.area = id; persist(); remount(); } else update({ content: id });
+    },
+  });
   const modeTabs = h('div', { class: 'seg', role: 'tablist', 'aria-label': 'Modo' }, [['free', 'Guiado'], ['open', 'Livre'], ['timed', 'Metrônomo']].map(([id, label]) =>
     h('button', { class: 'seg-btn', role: 'tab', 'data-mode': id, onclick: () => update({ mode: id }) }, label)));
   const chips = h('div', { class: 'info-row' });
@@ -257,10 +271,11 @@ function mountNotes(root, { remount }) {
     const open = quick.classList.toggle('open');
     btnQuick.setAttribute('aria-expanded', open);
   } }, '🎼 Exercício');
-  const btnCfg = h('button', { class: 'btn', 'aria-haspopup': 'dialog', onclick: () => toggleDrawer(true) }, '⚙ Ajustes');
-  const focus = createFocusMode();
-  const quick = h('div', { class: 'quick collapsible' });
-  const metroRow = h('div', { class: 'metro-row' });
+  const btnCfg = iconButton('ajustes', 'Ajustes', () => toggleDrawer(true), { 'aria-haspopup': 'dialog' });
+  const focus = createFocusMode({ iconOnly: true });
+  const rows = createExerciseRows();
+  const quick = rows.el;
+  const metroRow = h('div'); // o andamento agora fica na faixa do exercício; o elemento só guarda o estado "escondido"
   const staffCard = h('section', { class: 'card staff-card' }, chips, staff, graph.el);
   const liveCard = h('section', { class: 'card live' },
     h('div', { class: 'live-top' }, badge.el, h('div', { class: 'live-info' }, dots.el, status)),
@@ -276,9 +291,9 @@ function mountNotes(root, { remount }) {
   const scrim = h('div', { class: 'scrim', onclick: () => toggleDrawer(false) });
   root.classList.add('wide');
   root.append(
-    h('div', { class: 'inst-bar' }, instrTabs, modeTabs, h('span', { class: 'grow' }), btnMic, meter.el, createVolumeControl().el, focus.btn, btnQuick, btnCfg),
+    nav.el,
+    createPracticeBar([modeTabs], [micGroup(btnMic, meter.el), createVolumeControl({ iconOnly: true }).el, focus.btn, btnQuick, btnCfg]),
     quick,
-    metroRow,
     h('div', { class: 'inst-grid' }, staffCard, h('div', { class: 'inst-side' }, liveCard, result)),
     scrim, drawer, focus.exit,
   );
@@ -1107,21 +1122,25 @@ function mountNotes(root, { remount }) {
 
   // seletores rápidos, sempre à vista (não são recriados a cada mudança: o foco do teclado não se perde)
   const bpmSlider = createSlider({
-    label: 'Andamento', icon: '🥁', min: 40, max: 140, step: 2, value: cfg.bpm, tap: true, className: 'bpm-field',
-    format: (v) => `${v} bpm`, caption: tempoName, onChange: (v) => update({ bpm: v }, false),
+    label: 'Andamento', min: 40, max: 140, step: 2, value: cfg.bpm, compact: true,
+    format: (v) => `${v} bpm`, onChange: (v) => update({ bpm: v }, false),
   });
-  const bpmField = bpmSlider.el;
+  const bpmField = field('Andamento', bpmSlider.el);
   const btnCal = h('button', { class: 'btn cal-btn', onclick: () => openCal() });
   const figField = field('Figura (metrônomo)', select(FIGURES, cfg.figure, (v) => update({ figure: v })));
   function buildQuick() {
-    metroRow.replaceChildren(bpmField, btnCal);
-    quick.replaceChildren(
-      field('Escala', select(Object.entries(SCALE_TYPES).map(([k, v]) => [k, v.label]), cfg.type, (v) => update({ type: v }))),
+    rows.set(
+      [
+        field('Tonalidade', select([['auto', 'Sorteada'], ...tonicOptions(cfg.type)], cfg.tonic, (v) => update({ tonic: v }))),
+        field('Escala', select(Object.entries(SCALE_TYPES).map(([k, v]) => [k, v.label]), cfg.type, (v) => update({ type: v }))),
+        bpmField,
+      ],
+      [
       field('Padrão', select(Object.entries(PATTERNS).map(([k, v]) => [k, v.label.replace(' (grau a grau)', '')]), cfg.pattern, (v) => update({ pattern: v }))),
       field('Direção', select(Object.entries(DIRECTIONS), cfg.direction, (v) => update({ direction: v }))),
       field('Oitavas', select([[1, '1 oitava'], [2, '2 oitavas']], cfg.octaves, (v) => update({ octaves: Number(v) }))),
-      field('Tonalidade', select([['auto', 'Sorteada'], ...tonicOptions(cfg.type)], cfg.tonic, (v) => update({ tonic: v }))),
       figField,
+      ],
     );
   }
 
@@ -1190,11 +1209,7 @@ function mountNotes(root, { remount }) {
   }
 
   function paintTabs() {
-    instrTabs.querySelectorAll('.seg-btn').forEach((b) => {
-      const on = b.dataset.instr === cfg.instr;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-selected', on);
-    });
+    nav.paint();
     modeTabs.querySelectorAll('.seg-btn').forEach((b) => {
       const on = b.dataset.mode === cfg.mode;
       b.classList.toggle('active', on);
@@ -1203,7 +1218,7 @@ function mountNotes(root, { remount }) {
     btnStart.textContent = { free: '▶ Começar (Enter)', open: '▶ Começar a tocar (Enter)', timed: '▶ Tocar no tempo (Enter)' }[cfg.mode];
     btnStop.textContent = cfg.mode === 'open' ? '✓ Terminar' : '■ Parar';
     btnSkip.hidden = true;
-    metroRow.hidden = cfg.mode !== 'timed';
+    bpmField.hidden = cfg.mode !== 'timed';
     figField.hidden = cfg.mode !== 'timed';
     btnCal.textContent = `🎯 Calibrar latência (${cfg.offset > 0 ? '+' : ''}${cfg.offset} ms)`;
   }
@@ -1249,6 +1264,7 @@ function mountNotes(root, { remount }) {
     focus.destroy();
     stop(true);
     meter.destroy();
+    nav.destroy();
     audioPanel?.close();
     echo?.close();
     navigator.mediaDevices?.removeEventListener?.('devicechange', onDevChange);

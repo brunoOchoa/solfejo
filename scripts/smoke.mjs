@@ -82,6 +82,20 @@ try {
   const estat = await page.textContent('.ap-stats');
   console.log(`✓ microfone: ${estat}`);
   if (!/AudioWorklet/.test(estat)) console.log('  (aviso: caiu para o motor clássico)');
+
+  // 4) músicas (violino): a pauta inteira aparece, o braço mostra as notas do trecho e "Ouvir" percorre os compassos
+  await page.keyboard.press('Escape'); // fecha o painel de áudio
+  await page.waitForSelector('.modal-scrim', { state: 'detached', timeout: 5000 });
+  await page.click('[aria-label="Área"] >> text=Músicas');
+  await page.waitForSelector('.song-staff .vf-stavenote', { timeout: 10000 });
+  const nNotas = await page.locator('.song-staff .vf-stavenote').count();
+  const nBraco = await page.locator('.fb-scale').count();
+  if (nNotas < 40) falha(`músicas: a pauta tem só ${nNotas} notas`);
+  if (nBraco < 3) falha(`músicas: o braço mostra só ${nBraco} notas`);
+  await page.click('[aria-label="Modo"] >> text=Ouvir');
+  await page.click('.btn.primary >> text=Ouvir a música');
+  await page.waitForSelector('.tb-sub >> text=compasso 2', { timeout: 8000 });
+  console.log(nNotas >= 40 && nBraco >= 3 ? `✓ músicas: ${nNotas} notas na pauta, ${nBraco} no braço, ouvir percorre os compassos` : '✗ músicas');
 } catch (e) {
   falha(`verificação interrompida: ${e.message.split('\n')[0]}`);
 } finally {

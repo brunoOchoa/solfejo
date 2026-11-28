@@ -30,6 +30,10 @@ import { createMicMeter } from '../ui/micMeter.js';
 import { openAudioPanel } from '../ui/audioPanel.js';
 import { openCalibration } from '../ui/calibration.js';
 import { openEchoCalibration } from '../ui/echoCalibration.js';
+import { createPracticeNav } from '../ui/practiceNav.js';
+import {
+  createPracticeBar, createExerciseRows, iconButton, micGroup,
+} from '../ui/practiceBar.js';
 import { activeProfile, saveProfile, extraTolerance } from '../music/audioProfile.js';
 
 export const CHORD_DEFAULTS = {
@@ -150,8 +154,12 @@ export function mountChords(root, { defaults, remount }) {
   }
 
   // ---- elementos --------------------------------------------------------------------------
-  const instrTabs = h('div', { class: 'seg', role: 'tablist', 'aria-label': 'Instrumento' }, Object.entries(INSTRUMENT_PROFILES).map(([id, p]) =>
-    h('button', { class: 'seg-btn', role: 'tab', 'data-instr': id, onclick: () => update({ instr: id }) }, h('span', { text: p.icon }), h('span', { class: 'lbl', text: ` ${p.label}` }))));
+  const nav = createPracticeNav({
+    instruments: INSTRUMENT_PROFILES,
+    getCfg: () => cfg,
+    onInstrument: (id) => update({ instr: id }),
+    onArea: (id) => update({ content: id }),
+  });
   const modeTabs = h('div', { class: 'seg', role: 'tablist', 'aria-label': 'Modo' }, [['free', 'Guiado'], ['open', 'Livre'], ['timed', 'Metrônomo']].map(([id, label]) =>
     h('button', { class: 'seg-btn', role: 'tab', 'data-mode': id, onclick: () => update({ mode: id }) }, label)));
   const chips = h('div', { class: 'info-row' });
@@ -176,10 +184,11 @@ export function mountChords(root, { defaults, remount }) {
     const open = quick.classList.toggle('open');
     btnQuick.setAttribute('aria-expanded', open);
   } }, '🎼 Exercício');
-  const btnCfg = h('button', { class: 'btn', 'aria-haspopup': 'dialog', onclick: () => toggleDrawer(true) }, '⚙ Ajustes');
-  const focus = createFocusMode();
-  const quick = h('div', { class: 'quick collapsible' });
-  const metroRow = h('div', { class: 'metro-row' });
+  const btnCfg = iconButton('ajustes', 'Ajustes', () => toggleDrawer(true), { 'aria-haspopup': 'dialog' });
+  const focus = createFocusMode({ iconOnly: true });
+  const rows = createExerciseRows();
+  const quick = rows.el;
+  const metroRow = h('div'); // o andamento agora fica na faixa do exercício; o elemento só guarda o estado "escondido"
   const staffCard = h('section', { class: 'card staff-card chord-card' }, chips, strip, boardHost);
   const liveCard = h('section', { class: 'card live' },
     h('div', { class: 'live-top' }, badge.el, h('div', { class: 'live-info' }, dots.el, status)),
@@ -195,8 +204,9 @@ export function mountChords(root, { defaults, remount }) {
   const scrim = h('div', { class: 'scrim', onclick: () => toggleDrawer(false) });
   root.classList.add('wide');
   root.append(
-    h('div', { class: 'inst-bar' }, instrTabs, modeTabs, h('span', { class: 'grow' }), btnMic, meter.el, createVolumeControl().el, focus.btn, btnQuick, btnCfg),
-    quick, metroRow,
+    nav.el,
+    createPracticeBar([modeTabs], [micGroup(btnMic, meter.el), createVolumeControl({ iconOnly: true }).el, focus.btn, btnQuick, btnCfg]),
+    quick,
     h('div', { class: 'inst-grid' }, staffCard, h('div', { class: 'inst-side' }, liveCard, result)),
     scrim, drawer, focus.exit,
   );
@@ -709,20 +719,25 @@ export function mountChords(root, { defaults, remount }) {
 
   // ---- opções rápidas e ajustes -----------------------------------------------------------
   const bpmSlider = createSlider({
-    label: 'Andamento', icon: '🥁', min: 40, max: 140, step: 2, value: cfg.bpm, tap: true, className: 'bpm-field',
-    format: (v) => `${v} bpm`, caption: tempoName, onChange: (v) => update({ bpm: v }, false),
+    label: 'Andamento', min: 40, max: 140, step: 2, value: cfg.bpm, compact: true,
+    format: (v) => `${v} bpm`, onChange: (v) => update({ bpm: v }, false),
   });
+  const bpmField = field('Andamento', bpmSlider.el);
   const beatsField = field('Tempos por acorde', select([[1, '1 tempo'], [2, '2 tempos'], [4, '4 tempos (1 compasso)']], cfg.chordBeats, (v) => update({ chordBeats: Number(v) })));
   const dirField = field('Direção', select(Object.entries(DIRECTIONS), cfg.direction, (v) => update({ direction: v })));
   const shapeField = field('Formas', select([['open', 'Abertas'], ['barre', 'Com pestana']], cfg.chordShape, (v) => update({ chordShape: v })));
   function buildQuick() {
-    metroRow.replaceChildren(bpmSlider.el);
-    quick.replaceChildren(
+    rows.set(
+      [
       field('Exercício', select(Object.entries(PROGRESSIONS).map(([k, v]) => [k, v.label]), cfg.chordProg, (v) => update({ chordProg: v }))),
       field('Tonalidade', select([['auto', 'Sorteada'], ...tonicOptions(cfg.type)], cfg.tonic, (v) => update({ tonic: v }))),
       field('Escala', select(Object.entries(SCALE_TYPES).map(([k, v]) => [k, v.label]), cfg.type, (v) => update({ type: v }))),
+      bpmField,
+      ],
+      [
       field('Acordes', select([['triad', 'Tríades'], ['seventh', 'Com sétima']], cfg.chordExt, (v) => update({ chordExt: v }))),
       dirField, shapeField, beatsField,
+      ],
     );
   }
 
@@ -782,11 +797,7 @@ export function mountChords(root, { defaults, remount }) {
   }
 
   function paintTabs() {
-    instrTabs.querySelectorAll('.seg-btn').forEach((b) => {
-      const on = b.dataset.instr === cfg.instr;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-selected', on);
-    });
+    nav.paint();
     modeTabs.querySelectorAll('.seg-btn').forEach((b) => {
       const on = b.dataset.mode === mode();
       b.classList.toggle('active', on);
@@ -795,7 +806,7 @@ export function mountChords(root, { defaults, remount }) {
     btnStart.textContent = { free: '▶ Começar (Enter)', open: '▶ Começar a tocar (Enter)', timed: '▶ Tocar no tempo (Enter)' }[mode()];
     btnStop.textContent = mode() === 'open' ? '✓ Terminar' : '■ Parar';
     btnSkip.hidden = true;
-    metroRow.hidden = mode() !== 'timed';
+    bpmField.hidden = mode() !== 'timed';
     beatsField.hidden = mode() !== 'timed';
     dirField.hidden = cfg.chordProg !== 'harm';
     shapeField.hidden = !guitar();
@@ -831,6 +842,7 @@ export function mountChords(root, { defaults, remount }) {
     clearInterval(sampler);
     mic.stop();
     meter.destroy();
+    nav.destroy();
     audioPanel?.close();
     echo?.close();
     calib?.close();

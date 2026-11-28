@@ -65,6 +65,12 @@ npm run build    # gera dist/ (PWA, funciona offline após a 1ª visita)
 
 ## Praticar (instrumento)
 
+**Músicas (violino, protótipo).** No Praticar do violino, o botão *🎵 Músicas* abre a pauta de uma música inteira, com o dedo sobre
+cada nota e o braço mostrando as notas do compasso atual e do próximo. Modos: *Ouvir*, *Guiado* (espera cada nota; nota repetida pede
+novo golpe de arco) e *Tocar junto* (contagem, acompanhamento de piano e/ou metrônomo, avaliação por ritmo, estrelas e compassos para
+revisar). Dá para treinar um trecho de 4 compassos. As músicas são escritas em texto (`src/music/songs.js`: `A4e B4e C#5q rq | …`) e só
+entram melodias de domínio público escritas por nós; o catálogo de teste tem "Song of the Wind" (canção folclórica).
+
 **Desempenho visual.** O app mede os quadros por segundo a cada troca de aba (`src/perf.js`). Em Aparência › Desempenho dá
 para ver as últimas medidas e escolher Auto, Completo ou Leve. No Auto, três trocas seguidas abaixo de ~30 fps ligam o modo leve
 sozinho (sem desfoque de fundo, sem partículas, troca de aba só em fade). As outras telas são carregadas em segundo plano
@@ -104,7 +110,7 @@ sintetizador simples nas configurações ("Instrumento"; a escolha vale para tod
 estão em `public/samples/piano` (17 MP3, ~1,3 MB) e o PWA as guarda para uso offline. Para somar outro
 instrumento, coloque as amostras em outra pasta e registre em `src/music/audio.js`.
 
-Créditos: Salamander Grand Piano, de Alexander Holm, licença CC-BY 3.0. Violino (`public/samples/violin`) e violão de nylon (`public/samples/guitar`): coleção tonejs-instruments, de Nicholas Brosowsky, licença CC-BY 3.0. Ao trocar o instrumento na aba Praticar, o som acompanha (dá para mudar em Ajustes › Som).
+Créditos: Salamander Grand Piano, de Alexander Holm, licença CC-BY 3.0. Violino (`public/samples/violin-solo`): VSCO 2 Community Edition, de Versilian Studios, domínio público (CC0). Violino SSO (`violin-sso-v` e `violin-sso-n`): Sonatina Symphonic Orchestra, licença Creative Commons Sampling Plus 1.0. Violão de nylon (`public/samples/guitar`): coleção tonejs-instruments, de Nicholas Brosowsky, licença CC-BY 3.0. Ao trocar o instrumento na aba Praticar, o som acompanha (dá para mudar em Ajustes › Som).
 
 ## Estrutura
 

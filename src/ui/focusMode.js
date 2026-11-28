@@ -1,15 +1,17 @@
 // Modo foco: esconde cabeçalho, navegação e controles secundários, deixando só o essencial na tela (com tela cheia quando o aparelho permite).
 import { h } from '../dom.js';
+import { icon } from './icons.js';
 
 /**
  * Cria o botão "Foco" e o botão de sair. Quem usa decide, via CSS (body.focus-mode), o que some.
  * onChange(on) é chamado quando entra ou sai (para o gráfico recalcular o tamanho).
  */
-export function createFocusMode({ onChange } = {}) {
+export function createFocusMode({ onChange, iconOnly = false } = {}) {
   let on = false;
   let askedFullscreen = false;
 
-  const btn = h('button', { class: 'btn focus-btn', type: 'button', 'aria-pressed': 'false', title: 'Foco: mostra só o essencial e usa a tela inteira' }, '⛶ Foco');
+  const btn = h('button', { class: `btn focus-btn${iconOnly ? ' icon-btn' : ''}`, type: 'button', 'aria-pressed': 'false', title: 'Foco: mostra só o essencial e usa a tela inteira' }, iconOnly ? null : '⛶ Foco');
+  if (iconOnly) { btn.innerHTML = icon('foco', '1.2rem'); btn.setAttribute('aria-label', 'Modo foco'); }
   const exit = h('button', { class: 'btn focus-exit', type: 'button', 'aria-label': 'Sair do modo foco', title: 'Sair do modo foco', hidden: true }, h('span', { text: '✕' }), h('span', { class: 'lbl', text: ' Sair do foco' }));
 
   async function enter() {

@@ -1,0 +1,57 @@
+/* Barra do Praticar em duas faixas: contexto + ferramentas, e o exercício com "Mais opções" */
+.pbar-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-4); flex-wrap: wrap; }
+.pbar-ctx { display: flex; align-items: center; gap: var(--s-2) var(--s-3); flex-wrap: wrap; min-width: 0; }
+.pbar-tools { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; flex: none; }
+.pbar-bar .seg-btn { min-height: 36px; padding: 6px 12px; }
+.pbar-bar .btn { min-height: 40px; }
+
+/* botão só de ícone */
+.pbar-bar .btn.icon-btn, .pbar-bar .vol-wrap .btn.icon-btn { width: 40px; height: 40px; min-height: 40px; padding: 0; flex: none; display: inline-grid; place-items: center; }
+.icon-btn .ico { display: block; }
+
+/* microfone + medidor como um botão só */
+.pbar-mic { display: inline-flex; align-items: stretch; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); box-shadow: 0 2px 0 var(--btn-edge); overflow: hidden; flex: none; }
+.pbar-mic .btn { border: 0; border-radius: 0; box-shadow: none; background: transparent; min-height: 38px; height: 38px; padding: 0 12px; }
+.pbar-mic .btn.active { color: var(--ok); }
+.pbar-mic .mic-meter { border: 0; border-left: 1px solid var(--line); border-radius: 0; height: 38px; background: transparent; box-shadow: none; }
+.pbar-mic .btn:hover, .pbar-mic .mic-meter:hover { background: var(--card-2); }
+
+/* faixa do exercício */
+.pbar-rows { display: grid; gap: 0; }
+.pbar-ex { display: flex; align-items: flex-end; gap: var(--s-3); flex-wrap: wrap; }
+.pbar-rows .field { font-size: .75rem; gap: 2px; flex: 0 1 200px; min-width: 150px; }
+.pbar-rows .sel-btn { min-height: 38px; padding: 6px 8px 6px 10px; font-size: .84rem; }
+.pbar-rows .slider.compact { min-width: 210px; }
+.pbar-rows [hidden] { display: none !important; }
+.pbar-morebtn { margin-left: auto; min-height: 38px; padding: 0 14px; font-size: .84rem; }
+.pbar-morebtn .chev { display: inline-block; transition: transform var(--dur-base) var(--ease-spring); margin-left: 4px; }
+.pbar-morebtn.on .chev { transform: rotate(180deg); }
+.pbar-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .26s var(--ease-out), opacity .2s var(--ease-out); }
+.pbar-more:not(.open) { visibility: hidden; transition: grid-template-rows .26s var(--ease-out), opacity .2s var(--ease-out), visibility 0s .26s; }
+.pbar-more.open { grid-template-rows: 1fr; opacity: 1; }
+.pbar-more-in { min-height: 0; overflow: hidden; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--s-3); align-items: end; }
+.pbar-more.open .pbar-more-in { margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px dashed var(--line); overflow: visible; }
+.pbar-more[hidden] { display: none; }
+
+@media (max-width: 760px) {
+  .pbar-bar { gap: var(--s-2); }
+  .pbar-ctx { width: 100%; }
+  .pbar-ctx .seg { flex: 1 1 auto; }
+  .pbar-ctx .seg .seg-btn { flex: 1; padding: 6px 8px; font-size: .84rem; }
+  .pbar-ctx .seg:first-child .lbl { display: none; }
+  .pbar-tools { width: 100%; justify-content: space-between; margin-left: 0; }
+  .pbar-bar .quick-toggle { flex: 1; }
+  /* no celular o painel inteiro abre pelo botão "Exercício"; o botão "Mais opções" some e tudo aparece */
+  .pbar-rows.collapsible:not(.open) { display: none; }
+  .pbar-ex { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); }
+  .pbar-rows .field { flex: none; min-width: 0; }
+  .pbar-rows .slider.compact { min-width: 0; grid-column: 1 / -1; }
+  .pbar-morebtn { display: none; }
+  .pbar-more, .pbar-more:not(.open) { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition: none; }
+  .pbar-more-in { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); margin-top: var(--s-2); }
+}
+body.focus-mode .pbar-rows { display: none !important; }
+html.lite .pbar-more { transition: none; }
+@media (prefers-reduced-motion: reduce) { .pbar-more { transition: none; } .pbar-morebtn .chev { transition: none; } }
+.pbar-rows .field:has(.slider.compact) { flex: 1 1 260px; max-width: 340px; }
+.pbar-rows .slider.compact .sl-track { min-width: 90px; }

@@ -36,6 +36,9 @@ nav a.active { color: var(--brand-ink); background: transparent; }
   box-shadow: var(--glow); transition: transform var(--dur-slow) var(--ease-spring), width var(--dur-slow) var(--ease-spring);
 }
 
+/* telas largas: abas exatamente no centro da página, alinhadas à pílula do Praticar */
+@media (min-width: 1100px) { nav { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; } .hud { margin-left: auto; } }
+
 /* HUD à direita */
 .hud { display: flex; align-items: center; gap: 8px; flex: none; }
 .hud-chip {
